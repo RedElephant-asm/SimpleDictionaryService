@@ -1,13 +1,8 @@
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\Dictionary.java
+C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\DictionaryRecord.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\DictionaryService.java
-C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\Symbol.java
-C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\encoding\Encoding.java
-C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\encoding\SymbolTemplate.java
-C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\handlers\BinaryHandler.java
-C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\handlers\EncodingHandler.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\language\EncodingIntervalTable.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\language\Language.java
-C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\throwable\WrongEncodingException.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\throwable\WrongKeyLanguageException.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\throwable\WrongLanguageException.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\throwable\WrongWordLanguageException.java

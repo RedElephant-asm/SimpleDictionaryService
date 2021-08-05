@@ -1,7 +1,7 @@
 package SimpleDictionaryService;
 
-import SimpleDictionaryService.encoding.Encoding;
 import SimpleDictionaryService.language.Language;
+import org.SimpleEncodings.Encoding;
 
 import java.io.File;
 

@@ -1,8 +1,9 @@
 package SimpleDictionaryService;
 
-import SimpleDictionaryService.throwable.WrongEncodingException;
 import SimpleDictionaryService.throwable.WrongKeyLanguageException;
 import SimpleDictionaryService.throwable.WrongWordLanguageException;
+import org.SimpleEncodings.Symbol;
+import org.SimpleEncodings.throwable.WrongEncodingException;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -55,7 +56,10 @@ public class DictionaryService {
      */
     private void checkDictionaryKeyLanguage(byte[] dictionaryBytes) throws WrongKeyLanguageException{
         Symbol[] keySymbols = currentDictionary.getEncoding().convertEncodedByteArrayToEncodedSymbolArray(dictionaryBytes);
-        if (! currentDictionary.getWordLanguage().isArrayOfSymbolsMatchTheLanguage(keySymbols, Dictionary.KEY_ENCODING_MINIMAL_RATIO, currentDictionary.getEncoding())){
+        for (Symbol symbol : keySymbols) {
+            System.out.printf("%d \n", currentDictionary.getEncoding().getSymbolValuablePart(symbol));
+        }
+        if (! currentDictionary.getKeyLanguage().isArrayOfSymbolsMatchTheLanguage(keySymbols, Dictionary.KEY_ENCODING_MINIMAL_RATIO, currentDictionary.getEncoding())){
             throw new WrongKeyLanguageException();
         }
     }

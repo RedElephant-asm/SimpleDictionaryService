@@ -1,6 +1,6 @@
 package SimpleDictionaryService.language;
 
-import SimpleDictionaryService.encoding.Encoding;
+import org.SimpleEncodings.Encoding;
 
 /**
  * @author Savchenko Kirill

@@ -1,8 +1,7 @@
 package SimpleDictionaryService.language;
 
-import SimpleDictionaryService.Symbol;
-import SimpleDictionaryService.encoding.Encoding;
-import SimpleDictionaryService.handlers.EncodingHandler;
+import org.SimpleEncodings.Encoding;
+import org.SimpleEncodings.Symbol;
 
 /**
  * @author Savchenko Kirill
@@ -12,26 +11,41 @@ import SimpleDictionaryService.handlers.EncodingHandler;
  */
 public class Language {
 
-    public static final Language UNICODE_FOUR_LATIN_LETTERS =       new Language(15,
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_UTF8, new int[]{65, 90}, new int[]{97, 122}),
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16, new int[]{65, 90}, new int[]{97, 122}),
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_ASCII, new int[]{65, 90}, new int[]{97, 122}));
+    /**
+     * Пример модели латинского языка.
+     */
+    public static final Language UNICODE_LATIN =
+            new Language(
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF8, new int[]{65, 90}, new int[]{97, 122}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16LE, new int[]{65, 90}, new int[]{97, 122}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16BE, new int[]{65, 90}, new int[]{97, 122}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_ASCII, new int[]{65, 90}, new int[]{97, 122}));
 
-    public static final Language UNICODE_FIVE_DIGITS =              new Language(15,
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_UTF8, new int[]{48, 57}),
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16, new int[]{48, 57}),
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_ASCII, new int[]{48, 57}));
+    /**
+     * Пример модели языка, состоящего из цифр.
+     */
+    public static final Language UNICODE_DIGITS =
+            new Language(
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF8, new int[]{48, 57}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16LE, new int[]{48, 57}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16BE, new int[]{48, 57}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_ASCII, new int[]{48, 57}));
 
-    public static final Language UNICODE_RUSSIAN =                  new Language(15,
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_UTF8, new int[]{1040, 1103}, new int[]{1025, 1025}),
-                                                                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16, new int[]{1040, 1103}, new int[]{1025, 1025}));
+    /**
+     * Пример модели русского языка.
+     */
+    public static final Language UNICODE_RUSSIAN =
+            new Language(
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF8, new int[]{1040, 1103}, new int[]{1025, 1025}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16LE, new int[]{1040, 1103}, new int[]{1025, 1025}),
+                    new EncodingIntervalTable(Encoding.DEFAULT_UTF16BE, new int[]{1040, 1103}, new int[]{1025, 1025}));
 
-    public static final Language UNKNOWN_LANGUAGE =                 new Language(0);
+    public static final Language UNKNOWN_LANGUAGE =
+            new Language();
 
     public static final double      MINIMAL_SYMBOL_GROUP_MATCH_RATIO =  0.8;
 
-    Language(int maxWordLength, EncodingIntervalTable... intervalTables){
-        this.maxWordLength = maxWordLength;
+    Language(EncodingIntervalTable... intervalTables){
         this.intervalTables = intervalTables;
     }
 
@@ -39,11 +53,6 @@ public class Language {
      * Массив таблиц интервалов кодировок.
      */
     private EncodingIntervalTable[] intervalTables;
-
-    /**
-     * Максимальная длинна слова.
-     */
-    private int maxWordLength;
 
     /**
      * Функция предназначена для получения таблицы интервалов символов данного языка для определенной кодировки.
@@ -112,10 +121,9 @@ public class Language {
         if (symbolEncodingIntervalTable == EncodingIntervalTable.UNDEFINED_INTERVAL_TABLE){
             return false;
         }
-        int symbolNumericEquivalent = symbolEncoding.getSymbolNumericEquivalent(symbol);
-        System.out.printf("value : %d\n", symbolNumericEquivalent);
+        int symbolNumericEquivalent = symbolEncoding.getSymbolValuablePart(symbol);
         for (int[] currentInterval : symbolEncodingIntervalTable.getIntervals()) {
-            if ( (symbolNumericEquivalent >= currentInterval[0] && symbolNumericEquivalent <= currentInterval[1]) || EncodingHandler.isASCIIServiceSymbolCode(symbolNumericEquivalent)){
+            if ( (symbolNumericEquivalent >= currentInterval[0] && symbolNumericEquivalent <= currentInterval[1]) || Encoding.isASCIIServiceSymbolCode(symbolNumericEquivalent)){
                 return true;
             }
         }
@@ -128,13 +136,5 @@ public class Language {
 
     public EncodingIntervalTable[] getIntervalTables() {
         return intervalTables;
-    }
-
-    public int getMaxWordLength() {
-        return maxWordLength;
-    }
-
-    public void setMaxWordLength(int maxWordLength) {
-        this.maxWordLength = maxWordLength;
     }
 }
