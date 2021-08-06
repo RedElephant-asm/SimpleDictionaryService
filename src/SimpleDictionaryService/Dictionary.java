@@ -12,8 +12,8 @@ import java.io.File;
  */
 public class Dictionary extends File{
 
-    public static double WORD_ENCODING_MINIMAL_RATIO    = 0.66 * Encoding.MINIMAL_BYTE_GROUP_MATCH_RATIO;
-    public static double KEY_ENCODING_MINIMAL_RATIO     = 0.33 * Encoding.MINIMAL_BYTE_GROUP_MATCH_RATIO;
+    public static double WORD_LANGUAGE_MINIMAL_RATIO    = 0.8;
+    public static double KEY_LANGUAGE_MINIMAL_RATIO     = 0.8;
 
     /**
      * Полное имя файла, который является словарем.

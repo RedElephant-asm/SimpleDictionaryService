@@ -130,6 +130,36 @@ public class Language {
         return false;
     }
 
+    /**
+     * Назначением функции является просчет количества соответствующих вхождений строки - аргумента данному языку.
+     * @param strArg
+     * Строка - аргумент.
+     * @param encoding
+     * Кодировка строки - аргумента.
+     * @return
+     * Количество соответствующих данному языку вхождений.
+     */
+    public int countOfMatches(String strArg, Encoding encoding){
+        EncodingIntervalTable symbolEncodingIntervalTable = getEncodingIntervalTable(encoding);
+        if (symbolEncodingIntervalTable == EncodingIntervalTable.UNDEFINED_INTERVAL_TABLE){
+            return 0;
+        }
+    System.out.println("HERE!\n");
+        int count = 0;
+        char[] stringChars = strArg.toCharArray();
+        for (int counter = 0; counter < strArg.length(); counter++) {
+            System.out.printf("Char : %d\n", (int)strArg.charAt(counter));
+            for (int[] currentInterval : symbolEncodingIntervalTable.getIntervals()) {
+                System.out.printf("i0 : %d, i1 : %d\n", currentInterval[0], currentInterval[1]);
+                if ( ((int)strArg.charAt(counter) >= currentInterval[0] && (int)strArg.charAt(counter) <= currentInterval[1]) || Encoding.isASCIIServiceSymbolCode((int)strArg.charAt(counter))){
+                    count++;
+                }
+            }
+        }
+        System.out.printf("Count : %d\n", count);
+        return count;
+    }
+
     public void setIntervalTables(EncodingIntervalTable[] intervalTables) {
         this.intervalTables = intervalTables;
     }
