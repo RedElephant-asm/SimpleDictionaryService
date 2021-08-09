@@ -2,12 +2,12 @@ package SimpleDictionaryService;
 
 import SimpleDictionaryService.throwable.WrongKeyLanguageException;
 import SimpleDictionaryService.throwable.WrongWordLanguageException;
-import org.SimpleEncodings.Symbol;
 import org.SimpleEncodings.throwable.WrongEncodingException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 
 /**
  * @author Savchenko Kirill
@@ -22,14 +22,103 @@ public class DictionaryService {
      */
     private Dictionary currentDictionary;
 
-    private HashMap<String, String> dictionaryData;
+    /**
+     * Загружаемые данные файла - словаря.
+     */
+    private LinkedHashSet<DictionaryRecord> dictionaryData;
 
-    public DictionaryService(Dictionary dictionary){
+    /**
+     * Тип выполнения операций сервисов словаря.
+     */
+    private ExecutionStyle executionStyle;
+
+    private PrintWriter printWriter;
+
+    public DictionaryService(Dictionary dictionary, ExecutionStyle executionStyle){
+        this.executionStyle = executionStyle;
         setCurrentDictionary(dictionary);
     }
 
     public DictionaryService(){
 
+    }
+
+    /**
+     * Назначением функции является добавление в текущее состояние словаря новое вхождение(запись).
+     * @param record
+     * Указатель на обьект(запись) информация которого будет добавлена в текущее состояние словаря.
+     */
+    public void createRecord(DictionaryRecord record){
+        if(dictionaryData.stream().noneMatch(currentRecord -> currentRecord.getKey().equals(record.getKey()))){
+            dictionaryData.add(record);
+        }
+        finalizeOperation();
+    }
+
+    /**
+     * Назначением функции является поиск вхождения в текущем состоянии словаря.
+     * @param key
+     * Ключ, по которому будет производиться поиск.
+     * @return
+     * Указатель на новое вхождление текущего состояния словаря.
+     */
+    public DictionaryRecord readRecord(String key){
+        DictionaryRecord currentRecord = DictionaryRecord.UNKNOWN_RECORD;
+        for (DictionaryRecord record : dictionaryData) {
+             if (record.getKey().equals(key)){
+                 currentRecord = record;
+                 break;
+             }
+        }
+        finalizeOperation();
+        return currentRecord;
+    }
+
+    /**
+     * Назначением функции является обновление текущей части записи, на которую указывает передаваемый
+     * ключ, в соответствии с значением передаваемой строки.
+     * @param key
+     * Передаваемая строка.
+     */
+    public void updateRecord(String key, String newWord){
+        for (DictionaryRecord record : dictionaryData) {
+            if (record.getKey().equals(key)) {
+                record.setWorld(newWord);
+            }
+        }
+        finalizeOperation();
+    }
+
+    /**
+     * Назначением функции является удаление запсиси из текущего состояния словаря по ключу.
+     * @param key
+     * Ключ удаляемой записи.
+     */
+    public void deleteRecord(String key){
+        dictionaryData.removeIf(record -> record.getKey().equals(key));
+        finalizeOperation();
+    }
+
+    /**
+     * Назначением функции является запись т екущего состояния словаря на диск(сохраннение).
+     */
+    public void writeDictionary(){
+        for (DictionaryRecord record : dictionaryData) {
+            printWriter.println(record.toString());
+        }
+    }
+
+    /**
+     * Назначением функции является выполнение перечня операций при завершении редактирования
+     * текущего состояния словаря.
+     */
+    private void finalizeOperation(){
+        switch (executionStyle){
+            case HARD:
+                writeDictionary();
+                break;
+            case LAZY:
+        }
     }
 
     /**
@@ -58,33 +147,38 @@ public class DictionaryService {
         return bytes;
     }
 
-
     public Dictionary getCurrentDictionary() {
         return currentDictionary;
     }
 
     public void setCurrentDictionary(Dictionary currentDictionary) {
         this.currentDictionary = currentDictionary;
-        this.dictionaryData = new HashMap<>();
+        this.dictionaryData = new LinkedHashSet<>();
         try {
             byte[] dictionaryBytes = readAllDictionaryBytes();
-            validateDictionaryEncoding(dictionaryBytes);
+            if(dictionaryBytes.length > 20){
+                validateDictionaryEncoding(dictionaryBytes);
+            }
             int keySymbolsCount = 0, keySymbolsLanguageMatches = 0, wordSymbolsCount = 0, worldSymbolsLanguageMatches = 0;
             String currentLine;
-            String[] currentKeyWorldPair;
+            DictionaryRecord currentRecord;
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(currentDictionary), StandardCharsets.UTF_8));
             while ( (currentLine = bufferedReader.readLine()) != null){
-                currentKeyWorldPair = currentLine.split(" ");
-                keySymbolsCount += currentKeyWorldPair[0].length();
-                wordSymbolsCount += currentKeyWorldPair[1].length();
-                keySymbolsLanguageMatches += currentDictionary.getKeyLanguage().countOfMatches(currentKeyWorldPair[0], currentDictionary.getEncoding());
-                worldSymbolsLanguageMatches += currentDictionary.getWordLanguage().countOfMatches(currentKeyWorldPair[1], currentDictionary.getEncoding());
-                dictionaryData.put(currentKeyWorldPair[0], currentKeyWorldPair[1]);
+                currentRecord = new DictionaryRecord(currentLine, currentDictionary.getSeparator());
+                keySymbolsCount += currentRecord.getKey().length();
+                wordSymbolsCount += currentRecord.getWorld().length();
+                keySymbolsLanguageMatches += currentDictionary.getKeyLanguage().countOfMatches(currentRecord.getKey(), currentDictionary.getEncoding());
+                worldSymbolsLanguageMatches += currentDictionary.getWordLanguage().countOfMatches(currentRecord.getWorld(), currentDictionary.getEncoding());
+                dictionaryData.add(currentRecord);
             }
-            System.out.printf("keySymbolsCount = %d, keySymbolsLanguageMatches = %d, wordSymbolsCount = %d, worldSymbolsLanguageMatches = %d\n", keySymbolsCount, keySymbolsLanguageMatches, wordSymbolsCount, worldSymbolsLanguageMatches);
-            if ((double)keySymbolsLanguageMatches / keySymbolsCount < Dictionary.KEY_LANGUAGE_MINIMAL_RATIO) throw new WrongKeyLanguageException();
-            else if ((double)worldSymbolsLanguageMatches / wordSymbolsCount < Dictionary.WORD_LANGUAGE_MINIMAL_RATIO) throw new WrongWordLanguageException();
 
+            this.printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(currentDictionary), StandardCharsets.UTF_8), true);
+            if ((double)keySymbolsLanguageMatches / keySymbolsCount < Dictionary.KEY_LANGUAGE_MINIMAL_RATIO){
+                throw new WrongKeyLanguageException();
+            }
+            else if ((double)worldSymbolsLanguageMatches / wordSymbolsCount < Dictionary.WORD_LANGUAGE_MINIMAL_RATIO){
+                throw new WrongWordLanguageException();
+            }
         }catch (IOException | WrongKeyLanguageException | WrongWordLanguageException | WrongEncodingException exception){
             exception.printStackTrace();
         }

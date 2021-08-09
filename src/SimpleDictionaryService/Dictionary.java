@@ -12,8 +12,9 @@ import java.io.File;
  */
 public class Dictionary extends File{
 
-    public static double WORD_LANGUAGE_MINIMAL_RATIO    = 0.8;
-    public static double KEY_LANGUAGE_MINIMAL_RATIO     = 0.8;
+    public static final double WORD_LANGUAGE_MINIMAL_RATIO    = 0.8;
+    public static final double KEY_LANGUAGE_MINIMAL_RATIO     = 0.8;
+    public static final String DEFAULT_SEPARATOR              = " ";
 
     /**
      * Полное имя файла, который является словарем.
@@ -36,12 +37,18 @@ public class Dictionary extends File{
      */
     private Language keyLanguage;
 
-    public Dictionary(String fullFileName, Encoding encoding, Language wordLanguage, Language keyLanguage){
+    /**
+     * Указатель на строку, которая является разделителем в паре "ключ - значение".
+     */
+    private String separator = DEFAULT_SEPARATOR;
+
+    public Dictionary(String fullFileName, Encoding encoding, Language wordLanguage, Language keyLanguage, String separator){
         super(fullFileName);
         this.fullFileName = fullFileName;
         this.encoding = encoding;
         this.wordLanguage = wordLanguage;
         this.keyLanguage = keyLanguage;
+        setSeparator(separator);
 
     }
 
@@ -80,5 +87,15 @@ public class Dictionary extends File{
 
     public void setKeyLanguage(Language keyLanguage) {
         this.keyLanguage = keyLanguage;
+    }
+
+    public String getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(String separator) {
+        if (separator.length() > 0){
+            this.separator = separator;
+        }
     }
 }

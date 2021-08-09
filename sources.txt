@@ -1,6 +1,7 @@
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\Dictionary.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\DictionaryRecord.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\DictionaryService.java
+C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\ExecutionStyle.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\language\EncodingIntervalTable.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\language\Language.java
 C:\Users\ksavchenko\Documents\Projects\Java\SimpleDictionaryService\src\SimpleDictionaryService\throwable\WrongKeyLanguageException.java
