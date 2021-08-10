@@ -32,8 +32,6 @@ public class DictionaryService {
      */
     private ExecutionStyle executionStyle;
 
-    private PrintWriter printWriter;
-
     public DictionaryService(Dictionary dictionary, ExecutionStyle executionStyle){
         this.executionStyle = executionStyle;
         setCurrentDictionary(dictionary);
@@ -103,8 +101,14 @@ public class DictionaryService {
      * Назначением функции является запись т екущего состояния словаря на диск(сохраннение).
      */
     public void writeDictionary(){
-        for (DictionaryRecord record : dictionaryData) {
-            printWriter.println(record.toString());
+        try {
+            PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(currentDictionary), StandardCharsets.UTF_8));
+            for (DictionaryRecord record : dictionaryData) {
+                printWriter.println(record.toString());
+            }
+            printWriter.close();
+        }catch (IOException exception){
+            exception.printStackTrace();
         }
     }
 
@@ -172,7 +176,6 @@ public class DictionaryService {
                 dictionaryData.add(currentRecord);
             }
 
-            this.printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(currentDictionary), StandardCharsets.UTF_8), true);
             if ((double)keySymbolsLanguageMatches / keySymbolsCount < Dictionary.KEY_LANGUAGE_MINIMAL_RATIO){
                 throw new WrongKeyLanguageException();
             }
