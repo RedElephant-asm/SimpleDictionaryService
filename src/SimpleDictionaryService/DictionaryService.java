@@ -186,4 +186,8 @@ public class DictionaryService {
             exception.printStackTrace();
         }
     }
+
+    public LinkedHashSet<DictionaryRecord> getDictionaryData() {
+        return dictionaryData;
+    }
 }

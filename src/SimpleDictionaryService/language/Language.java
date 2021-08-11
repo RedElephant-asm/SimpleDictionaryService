@@ -3,6 +3,9 @@ package SimpleDictionaryService.language;
 import org.SimpleEncodings.Encoding;
 import org.SimpleEncodings.Symbol;
 
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+
 /**
  * @author Savchenko Kirill
  * @version 1.0
@@ -53,6 +56,12 @@ public class Language {
      * Массив таблиц интервалов кодировок.
      */
     private EncodingIntervalTable[] intervalTables;
+
+    private static final LinkedHashMap<String, Language> stdLanguageDescriptions = new LinkedHashMap<String, Language>() {{
+        put("latin", UNICODE_LATIN);
+        put("digits", UNICODE_DIGITS);
+        put("russian", UNICODE_RUSSIAN);
+    }};
 
     /**
      * Функция предназначена для получения таблицы интервалов символов данного языка для определенной кодировки.
@@ -153,6 +162,11 @@ public class Language {
             }
         }
         return count;
+    }
+
+    public static Language getLanguageByName(String name){
+        if (! (stdLanguageDescriptions.get(name) == null)) return stdLanguageDescriptions.get(name);
+        return UNKNOWN_LANGUAGE;
     }
 
     public void setIntervalTables(EncodingIntervalTable[] intervalTables) {
