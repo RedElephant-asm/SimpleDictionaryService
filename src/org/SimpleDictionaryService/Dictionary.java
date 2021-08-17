@@ -1,6 +1,6 @@
-package SimpleDictionaryService;
+package org.SimpleDictionaryService;
 
-import SimpleDictionaryService.language.Language;
+import org.SimpleDictionaryService.language.Language;
 import org.SimpleEncodings.Encoding;
 
 import java.io.File;

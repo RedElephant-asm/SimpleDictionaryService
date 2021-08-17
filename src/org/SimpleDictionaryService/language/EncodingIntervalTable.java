@@ -1,4 +1,4 @@
-package SimpleDictionaryService.language;
+package org.SimpleDictionaryService.language;
 
 import org.SimpleEncodings.Encoding;
 

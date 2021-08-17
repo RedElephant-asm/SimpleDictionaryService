@@ -1,12 +1,15 @@
-package SimpleDictionaryService;
+package org.SimpleDictionaryService;
 
-import SimpleDictionaryService.throwable.WrongKeyLanguageException;
-import SimpleDictionaryService.throwable.WrongWordLanguageException;
+import org.SimpleDictionaryService.language.Language;
+import org.SimpleDictionaryService.throwable.UnknownEncodingException;
+import org.SimpleDictionaryService.throwable.UnknownLanguageException;
+import org.SimpleDictionaryService.throwable.WrongKeyLanguageException;
+import org.SimpleDictionaryService.throwable.WrongWordLanguageException;
+import org.SimpleEncodings.Encoding;
 import org.SimpleEncodings.throwable.WrongEncodingException;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 
 /**
@@ -32,7 +35,7 @@ public class DictionaryService {
      */
     private ExecutionStyle executionStyle;
 
-    public DictionaryService(Dictionary dictionary, ExecutionStyle executionStyle){
+    public DictionaryService(Dictionary dictionary, ExecutionStyle executionStyle) throws UnknownEncodingException, UnknownLanguageException {
         this.executionStyle = executionStyle;
         setCurrentDictionary(dictionary);
     }
@@ -81,7 +84,7 @@ public class DictionaryService {
     public void updateRecord(String key, String newWord){
         for (DictionaryRecord record : dictionaryData) {
             if (record.getKey().equals(key)) {
-                record.setWorld(newWord);
+                record.setWord(newWord);
             }
         }
         finalizeOperation();
@@ -104,7 +107,7 @@ public class DictionaryService {
         try {
             PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(currentDictionary), StandardCharsets.UTF_8));
             for (DictionaryRecord record : dictionaryData) {
-                printWriter.println(record.toString());
+                printWriter.println(String.format("%s%s%s", record.getKey(), currentDictionary.getSeparator(), record.getWord()));
             }
             printWriter.close();
         }catch (IOException exception){
@@ -151,11 +154,21 @@ public class DictionaryService {
         return bytes;
     }
 
+    public boolean isDictionarySelected(){
+        return this.currentDictionary != null;
+    }
+
     public Dictionary getCurrentDictionary() {
         return currentDictionary;
     }
 
-    public void setCurrentDictionary(Dictionary currentDictionary) {
+    public void setCurrentDictionary(Dictionary currentDictionary) throws UnknownEncodingException, UnknownLanguageException {
+        if (currentDictionary.getEncoding() == Encoding.UNKNOWN_ENCODING){
+            throw new UnknownEncodingException();
+        }
+        if (currentDictionary.getKeyLanguage() == Language.UNKNOWN_LANGUAGE || currentDictionary.getWordLanguage() == Language.UNKNOWN_LANGUAGE){
+            throw new UnknownLanguageException();
+        }
         this.currentDictionary = currentDictionary;
         this.dictionaryData = new LinkedHashSet<>();
         try {
@@ -168,11 +181,12 @@ public class DictionaryService {
             DictionaryRecord currentRecord;
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(currentDictionary), StandardCharsets.UTF_8));
             while ( (currentLine = bufferedReader.readLine()) != null){
-                currentRecord = new DictionaryRecord(currentLine, currentDictionary.getSeparator());
+                String[] keyWordPair = currentLine.split(currentDictionary.getSeparator());
+                currentRecord = new DictionaryRecord(keyWordPair[0], keyWordPair[1]);
                 keySymbolsCount += currentRecord.getKey().length();
-                wordSymbolsCount += currentRecord.getWorld().length();
+                wordSymbolsCount += currentRecord.getWord().length();
                 keySymbolsLanguageMatches += currentDictionary.getKeyLanguage().countOfMatches(currentRecord.getKey(), currentDictionary.getEncoding());
-                worldSymbolsLanguageMatches += currentDictionary.getWordLanguage().countOfMatches(currentRecord.getWorld(), currentDictionary.getEncoding());
+                worldSymbolsLanguageMatches += currentDictionary.getWordLanguage().countOfMatches(currentRecord.getWord(), currentDictionary.getEncoding());
                 dictionaryData.add(currentRecord);
             }
 
@@ -189,5 +203,13 @@ public class DictionaryService {
 
     public LinkedHashSet<DictionaryRecord> getDictionaryData() {
         return dictionaryData;
+    }
+
+    public ExecutionStyle getExecutionStyle() {
+        return executionStyle;
+    }
+
+    public void setExecutionStyle(ExecutionStyle executionStyle) {
+        this.executionStyle = executionStyle;
     }
 }

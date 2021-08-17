@@ -1,10 +1,9 @@
-package SimpleDictionaryService.language;
+package org.SimpleDictionaryService.language;
 
 import org.SimpleEncodings.Encoding;
 import org.SimpleEncodings.Symbol;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 
 /**
  * @author Savchenko Kirill

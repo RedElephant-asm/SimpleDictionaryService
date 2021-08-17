@@ -1,4 +1,4 @@
-package SimpleDictionaryService;
+package org.SimpleDictionaryService;
 
 public enum ExecutionStyle {
     LAZY,
